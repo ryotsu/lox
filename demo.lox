@@ -1,0 +1,7 @@
+fun main(a, b) {
+  print a;
+}
+
+fun();
+
+print "Hello World!";

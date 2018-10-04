@@ -1,0 +1,12 @@
+[package]
+name = "lox"
+version = "0.1.0"
+authors = ["Mayank Tripathi <ryotsu@kochika.me>"]
+edition = "2018"
+
+[lib]
+name = "lox"
+path = "src/lib/mod.rs"
+
+[dependencies]
+itertools = "0.7.8"
