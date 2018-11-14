@@ -2,7 +2,8 @@ extern crate itertools;
 
 #[macro_use]
 mod utils;
-mod grammar;
+mod ast;
+mod parser;
 mod scanner;
 mod tokens;
 
@@ -26,8 +27,7 @@ pub fn run_repl() {
     loop {
         let mut source = String::new();
         stdin().read_line(&mut source).unwrap();
-        for token in Scanner::new(&source) {
-            println!("{:?}", token);
-        }
+        let tokens = Scanner::new(&source);
+        parser::parse_it(tokens.peekable());
     }
 }

@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TokenType {
     // Single-character tokens
     LEFT_PAREN,
@@ -49,17 +49,17 @@ pub enum TokenType {
     WHILE,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Token {
-    pub token: TokenType,
+    pub token_type: TokenType,
     pub line: usize,
     pub offset: usize,
 }
 
 impl Token {
-    pub fn new(token: TokenType, line: usize, offset: usize) -> Self {
+    pub fn new(token_type: TokenType, line: usize, offset: usize) -> Self {
         Token {
-            token: token,
+            token_type: token_type,
             line: line,
             offset: offset,
         }

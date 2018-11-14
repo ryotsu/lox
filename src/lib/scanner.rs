@@ -72,7 +72,7 @@ impl<'a> Scanner<'a> {
         Some(Token::new(token_type, self.start_line, self.start_char))
     }
 
-    fn match_equal(&mut self, success: TokenType, failure: TokenType) -> Option<Token> {
+    fn match_equal(&mut self, failure: TokenType, success: TokenType) -> Option<Token> {
         let token_type = if Some(true) == match_next!(self.source, '=') {
             self.end_char += 1;
             success

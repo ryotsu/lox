@@ -27,6 +27,23 @@ macro_rules! check_func {
     };
 }
 
+macro_rules! match_next_token {
+    ( $iter:expr, $( $match:expr ),+ ) => {
+        if Some(true) == $iter.peek().map(|i| $( i.token_type == $match )||+ ) {
+            $iter.next();
+            true
+        } else {
+            false
+        }
+    };
+}
+
+macro_rules! check_next_token {
+    ( $iter:expr, $( $match:expr ),+ ) => {
+        $iter.peek().map(|i| $( i.token_type == $match )||+ )
+    };
+}
+
 pub fn error<T: Display>(line: usize, offset: usize, message: T) {
     eprintln!("L{}:{} {}", line, offset, message);
 }
