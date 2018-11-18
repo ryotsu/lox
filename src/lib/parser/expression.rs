@@ -167,6 +167,16 @@ impl Literal {
         use self::Literal::*;
         use self::Primary::*;
 
+        if tokens.peek() == None {
+            return Err(format!("Expected a literal. Found EOF"));
+        } else if Some(true) == check_next_token!(tokens, SEMICOLON) {
+            let token = tokens.peek().unwrap();
+            return Err(format!(
+                "L{}:{} {}",
+                token.line, token.offset, "Expected a literal. Found ';'"
+            ));
+        }
+
         let literal = match tokens.next().unwrap().token_type {
             IDENTIFIER(identifier) => Variable(identifier),
             NUMBER(num) => Primary(Number(num)),

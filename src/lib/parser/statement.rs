@@ -33,7 +33,6 @@ impl Statement {
     }
 
     fn expression<T: Iterator<Item = Token>>(tokens: &mut Peekable<T>) -> Result<Self, String> {
-        println!("{:?}", tokens.peek());
         let expr = Expression::parse(tokens)?;
         utils::consume(tokens, SEMICOLON, "Expect ';' after statement")?;
         Ok(Statement::Expression(expr))

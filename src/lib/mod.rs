@@ -7,6 +7,7 @@ mod parser;
 mod scanner;
 mod tokens;
 
+use self::ast::Program;
 use self::scanner::Scanner;
 use std::fs::File;
 use std::io::prelude::*;
@@ -27,7 +28,12 @@ pub fn run_repl() {
     loop {
         let mut source = String::new();
         stdin().read_line(&mut source).unwrap();
-        let (tokens, _errors) = Scanner::new(&source).tokenize();
-        parser::parse_it(tokens.into_iter().peekable());
+        let mut scanner = Scanner::new(&source);
+        let (tokens, errors) = scanner.tokenize();
+        for err in errors {
+            eprintln!("{}", err);
+        }
+        let program = Program::parse(&mut tokens.into_iter().peekable());
+        println!("{:?}", program);
     }
 }

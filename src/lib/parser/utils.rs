@@ -1,5 +1,6 @@
 use crate::ast::BinaryOp;
 use crate::tokens::{Token, TokenType};
+use std::fmt::Display;
 use std::iter::Peekable;
 
 pub fn get_identifier<T>(tokens: &mut Peekable<T>) -> Result<String, String>
@@ -9,7 +10,10 @@ where
     match tokens.next() {
         Some(token) => match token.token_type {
             TokenType::IDENTIFIER(identifier) => Ok(identifier),
-            _ => Err(format!("Expected IDENTIFIER, found {:?}", token.token_type)),
+            _ => Err(format!(
+                "L{}:{} Expected IDENTIFIER, found {:?}",
+                token.line, token.offset, token.token_type
+            )),
         },
         None => Err(format!("Expected IDENTIFIER, found EOF")),
     }
@@ -22,7 +26,7 @@ pub fn consume<T, U>(
 ) -> Result<TokenType, String>
 where
     T: Iterator<Item = Token>,
-    U: Into<String>,
+    U: Display,
 {
     match tokens.peek() {
         Some(t) if t.token_type == token => {
@@ -34,12 +38,12 @@ where
                 if let TokenType::IDENTIFIER(_) = token {
                     Ok(tokens.next().unwrap().token_type)
                 } else {
-                    Err(message.into())
+                    Err(format!("L{}:{} {}", t.line, t.offset, message))
                 }
             }
-            _ => Err(message.into()),
+            _ => Err(format!("L{}:{} {}", t.line, t.offset, message)),
         },
-        None => Err(message.into()),
+        None => Err(format!("{} found EOF", message)),
     }
 }
 
