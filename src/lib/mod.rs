@@ -27,7 +27,7 @@ pub fn run_repl() {
     loop {
         let mut source = String::new();
         stdin().read_line(&mut source).unwrap();
-        let tokens = Scanner::new(&source);
-        parser::parse_it(tokens.peekable());
+        let (tokens, _errors) = Scanner::new(&source).tokenize();
+        parser::parse_it(tokens.into_iter().peekable());
     }
 }

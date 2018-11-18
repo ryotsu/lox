@@ -2,11 +2,11 @@ mod expression;
 mod statement;
 mod utils;
 
-use super::scanner::Scanner;
+use super::tokens::Token;
 use crate::ast::Statement;
 use std::iter::Peekable;
 
-pub fn parse_it(mut tokens: Peekable<Scanner>) {
+pub fn parse_it<T: Iterator<Item = Token>>(mut tokens: Peekable<T>) {
     let mut statements = vec![];
 
     while tokens.peek() != None {

@@ -1,7 +1,7 @@
 use super::tokens::TokenType::*;
 use super::tokens::{Token, TokenType};
-use super::utils;
 use itertools::{multipeek, MultiPeek};
+use std::fmt::Display;
 use std::mem;
 use std::str::Chars;
 
@@ -11,7 +11,7 @@ pub struct Scanner<'a> {
     end_line: usize,
     start_char: usize,
     end_char: usize,
-    has_error: bool,
+    errors: Vec<String>,
     literal: String,
 }
 
@@ -23,9 +23,14 @@ impl<'a> Scanner<'a> {
             end_line: 1,
             start_char: 0,
             end_char: 0,
-            has_error: false,
+            errors: vec![],
             literal: String::new(),
         }
+    }
+
+    pub fn tokenize(&mut self) -> (Vec<Token>, &[String]) {
+        let tokens = self.collect();
+        (tokens, &self.errors)
     }
 
     fn next_token(&mut self) -> Option<Token> {
@@ -56,12 +61,11 @@ impl<'a> Scanner<'a> {
                 self.next_token()
             }
             Some(ch) => {
-                utils::error(
+                self.push_error(
                     self.start_line,
                     self.start_char,
                     format!("Unknown token: '{}'", ch),
                 );
-                self.has_error = true;
                 self.next_token()
             }
             None => None,
@@ -108,8 +112,7 @@ impl<'a> Scanner<'a> {
 
         match self.source.next() {
             None => {
-                self.has_error = true;
-                utils::error(self.start_line, self.start_char, "Unterminated string.");
+                self.push_error(self.start_line, self.start_char, "Unterminated string.");
                 None
             }
             Some(_) => {
@@ -176,6 +179,11 @@ impl<'a> Scanner<'a> {
 
     fn get_literal(&mut self) -> String {
         mem::replace(&mut self.literal, String::new())
+    }
+
+    fn push_error<T: Display>(&mut self, line: usize, offset: usize, message: T) {
+        self.errors
+            .push(format!("L{}:{} {}", line, offset, message));
     }
 }
 
