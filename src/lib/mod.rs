@@ -9,6 +9,7 @@ mod scanner;
 mod tokens;
 
 use self::ast::Program;
+use self::runner::environment::Environment;
 use self::scanner::Scanner;
 use std::fs::File;
 use std::io::prelude::*;
@@ -20,6 +21,8 @@ pub fn run_file(path: &str) -> Result<(), Error> {
     file.read_to_string(&mut contents)?;
     let mut scanner = Scanner::new(&contents);
     let (tokens, errors) = scanner.tokenize();
+
+    let mut env = Environment::new();
     match Program::parse(&mut tokens.into_iter().peekable()) {
         Err(errs) => {
             for err in errors.iter().chain(errs.iter()) {
@@ -27,7 +30,7 @@ pub fn run_file(path: &str) -> Result<(), Error> {
             }
             Ok(())
         }
-        Ok(program) => match program.run() {
+        Ok(program) => match program.run(&mut env) {
             Err(err) => Ok(eprintln!("{}", err)),
             _ => Ok(()),
         },
@@ -35,6 +38,7 @@ pub fn run_file(path: &str) -> Result<(), Error> {
 }
 
 pub fn run_repl() {
+    let mut env = Environment::new();
     loop {
         let mut source = String::new();
         stdin().read_line(&mut source).unwrap();
@@ -46,7 +50,7 @@ pub fn run_repl() {
                     eprintln!("{}", err);
                 }
             }
-            Ok(program) => match program.run() {
+            Ok(program) => match program.run(&mut env) {
                 Err(err) => eprintln!("{}", err),
                 _ => (),
             },

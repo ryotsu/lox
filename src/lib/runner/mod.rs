@@ -1,4 +1,4 @@
-mod environment;
+pub mod environment;
 mod expression;
 mod statement;
 
@@ -19,12 +19,11 @@ trait Executable {
 }
 
 impl Program {
-    pub fn run(&self) -> Result<(), String> {
+    pub fn run(&self, env: &mut Environment) -> Result<(), String> {
         use self::RetErr::*;
 
-        let mut env = Environment::new();
         for statement in &self.statements {
-            match statement.execute(&mut env) {
+            match statement.execute(env) {
                 Err(Return(_)) => return Err(format!("Cannot have return outside a function")),
                 Err(Error(err)) => return Err(err),
                 Ok(()) => (),
