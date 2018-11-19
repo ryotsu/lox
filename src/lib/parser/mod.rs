@@ -22,7 +22,6 @@ impl Program {
         }
 
         if errors.len() != 0 {
-            println!("{:?}", statements);
             Err(errors)
         } else {
             Ok(Program {

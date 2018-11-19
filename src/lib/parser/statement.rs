@@ -1,5 +1,5 @@
 use super::utils;
-use crate::ast::{Block, Declaration, Expression, Function, If, Statement, While};
+use crate::ast::{Block, Conditional, Declaration, Expression, Function, Iteration, Statement};
 use crate::tokens::{Token, TokenType::*};
 use std::iter::Peekable;
 
@@ -14,11 +14,13 @@ impl Statement {
         } else if match_next_token!(tokens, LEFT_BRACE) {
             Block::parse(tokens)
         } else if match_next_token!(tokens, IF) {
-            If::parse(tokens)
+            Conditional::parse(tokens)
         } else if match_next_token!(tokens, WHILE) {
-            While::parse(tokens)
+            Iteration::parse(tokens)
         } else if match_next_token!(tokens, FOR) {
-            While::parse_for(tokens)
+            Iteration::parse_for(tokens)
+        } else if match_next_token!(tokens, RETURN) {
+            Self::ret(tokens)
         } else {
             Self::expression(tokens)
         }
@@ -36,6 +38,12 @@ impl Statement {
         let expr = Expression::parse(tokens)?;
         utils::consume(tokens, SEMICOLON, "Expect ';' after statement")?;
         Ok(Statement::Expression(expr))
+    }
+
+    fn ret<T: Iterator<Item = Token>>(tokens: &mut Peekable<T>) -> Result<Self, String> {
+        let expr = Expression::parse(tokens)?;
+        utils::consume(tokens, SEMICOLON, "Expect ';' after return statement")?;
+        Ok(Statement::Return(expr))
     }
 }
 
@@ -75,7 +83,7 @@ impl Function {
 
         Ok(Statement::Function(Function {
             name: name,
-            args: params,
+            params: params,
             body: Box::new(body),
         }))
     }
@@ -96,7 +104,7 @@ impl Block {
     }
 }
 
-impl If {
+impl Conditional {
     fn parse<T: Iterator<Item = Token>>(tokens: &mut Peekable<T>) -> Result<Statement, String> {
         utils::consume(tokens, LEFT_PAREN, "Expect '(' after if")?;
         let expr = Expression::parse(tokens)?;
@@ -108,7 +116,7 @@ impl If {
             else_branch = Some(Box::new(Statement::parse(tokens)?));
         }
 
-        Ok(Statement::If(If {
+        Ok(Statement::Conditional(Conditional {
             cond: expr,
             success: Box::new(then_branch),
             failure: else_branch,
@@ -116,14 +124,14 @@ impl If {
     }
 }
 
-impl While {
+impl Iteration {
     fn parse<T: Iterator<Item = Token>>(tokens: &mut Peekable<T>) -> Result<Statement, String> {
         utils::consume(tokens, LEFT_PAREN, "Expect '(' after 'while'")?;
         let cond = Expression::parse(tokens)?;
         utils::consume(tokens, RIGHT_PAREN, "Expect ')' after condition")?;
         let body = Statement::parse(tokens)?;
 
-        Ok(Statement::While(While {
+        Ok(Statement::Iteration(Iteration {
             cond: cond,
             body: Box::new(body),
         }))
@@ -164,12 +172,12 @@ impl While {
         }
 
         body = if let Some(c) = cond {
-            Statement::While(While {
+            Statement::Iteration(Iteration {
                 cond: c,
                 body: Box::new(body),
             })
         } else {
-            Statement::While(While {
+            Statement::Iteration(Iteration {
                 cond: Expression::Literal(Literal::Primary(Primary::Boolean(true))),
                 body: Box::new(body),
             })

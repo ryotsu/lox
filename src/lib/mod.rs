@@ -4,6 +4,7 @@ extern crate itertools;
 mod utils;
 mod ast;
 mod parser;
+mod runner;
 mod scanner;
 mod tokens;
 
@@ -17,11 +18,20 @@ pub fn run_file(path: &str) -> Result<(), Error> {
     let mut file = File::open(path)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
-    for token in Scanner::new(&contents) {
-        println!("{:?}", token);
+    let mut scanner = Scanner::new(&contents);
+    let (tokens, errors) = scanner.tokenize();
+    match Program::parse(&mut tokens.into_iter().peekable()) {
+        Err(errs) => {
+            for err in errors.iter().chain(errs.iter()) {
+                eprintln!("{}", err);
+            }
+            Ok(())
+        }
+        Ok(program) => match program.run() {
+            Err(err) => Ok(eprintln!("{}", err)),
+            _ => Ok(()),
+        },
     }
-
-    Ok(())
 }
 
 pub fn run_repl() {
@@ -30,10 +40,16 @@ pub fn run_repl() {
         stdin().read_line(&mut source).unwrap();
         let mut scanner = Scanner::new(&source);
         let (tokens, errors) = scanner.tokenize();
-        for err in errors {
-            eprintln!("{}", err);
+        match Program::parse(&mut tokens.into_iter().peekable()) {
+            Err(errs) => {
+                for err in errors.iter().chain(errs.iter()) {
+                    eprintln!("{}", err);
+                }
+            }
+            Ok(program) => match program.run() {
+                Err(err) => eprintln!("{}", err),
+                _ => (),
+            },
         }
-        let program = Program::parse(&mut tokens.into_iter().peekable());
-        println!("{:?}", program);
     }
 }
