@@ -10,7 +10,7 @@ Features:
  - [x] Parser
  - [x] Control Flow
  - [x] Functions
- - [ ] Closures
+ - [x] Closures
  - [ ] Classes
  - [ ] Inheritence
 
