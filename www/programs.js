@@ -49,5 +49,20 @@ fun prime_factors(num) {
   }
 }
 
-prime_factors(6300);`
+prime_factors(6300);`,
+
+  "Closures": `fun fib_gen() {
+  var a = 0;
+  var b = 1;
+  fun fib() {
+    return a = b = a + b;
+  }
+  return fib;
+}
+
+var fib = fib_gen();
+
+for (var i = 0; i <= 20; i = i + 1) {
+ print fib();
+}`
 }
