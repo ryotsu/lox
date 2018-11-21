@@ -1,2 +1,6 @@
 /target
 **/*.rs.bk
+*.txt
+*.lox
+*.data
+benches
