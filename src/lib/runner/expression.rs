@@ -109,12 +109,12 @@ impl Evaluable for Assignment {
 
 impl Evaluable for Call {
     fn evaluate(&self, env: &mut Environment) -> Result<Value, String> {
-        let func = match self.callee.evaluate(env)? {
-            Value::Function(func) => func,
+        let (func, func_env) = match self.callee.evaluate(env)? {
+            Value::Function(func, func_env) => (func, func_env),
             value => return Err(format!("{} is not callable", value)),
         };
 
-        let mut func_env = env.append();
+        let mut func_env = func_env.append();
 
         for (key, val) in func.params.iter().zip(&self.arguments) {
             func_env.declare(key.clone(), val.evaluate(env)?);

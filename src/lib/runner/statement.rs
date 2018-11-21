@@ -41,7 +41,11 @@ impl Executable for Declaration {
 
 impl Executable for Function {
     fn execute(&self, env: &mut Environment) -> Result<(), RetErr> {
-        env.declare(self.name.clone(), Value::Function((*self).clone()));
+        let func_env = env.clone();
+        env.declare(
+            self.name.clone(),
+            Value::Function((*self).clone(), func_env),
+        );
         Ok(())
     }
 }
