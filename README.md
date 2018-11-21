@@ -2,9 +2,16 @@
 
 A lox interpreter written in Rust.
 
-See `wasm` branch for online demo.
+#### To run it locally:
 
-Features:
+ - Compile to `wasm` with `wasm-pack build`
+ - Install dependencies in `www` with `npm install`
+ - Link the contents of `./pkg` with `npm link` and `npm link lox`
+ - Run development server `npm run start`
+ - Browse `https://localhost:8080/`
+
+
+#### Features:
 
  - [x] Scanner
  - [x] Parser
