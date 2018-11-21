@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello Lox!</title>
+  </head>
+  <body>
+    <div class="navbar">
+      <ul class="horizontal">
+        <li class="menu-item dropdown" id="dropdown">
+          <a class="menu-content drop-btn">
+            <span id="selected">Hello World</span>
+          </a>
+          <div class="dropdown-content" id="options">
+          </div>
+        </li>
+        <li class="menu-item">
+          <button class="menu-content pure-button pure-button-primary" id="run">Run</button>
+        </li>
+        <li class="menu-item" style="float:right"><a class="active menu-content">Lox</a></li>
+      </ul>
+    </div>
+    <div id="code" class="split left"></div>
+    <div class="vertical"></div>
+    <div id="output" class="split right"></div>
+    <script src="./bootstrap.js"></script>
+  </body>
+</html>

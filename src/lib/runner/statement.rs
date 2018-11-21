@@ -2,6 +2,7 @@ use super::environment::Environment;
 use super::{Evaluable, Executable, RetErr};
 use crate::ast::Statement::*;
 use crate::ast::{Block, Conditional, Declaration, Function, Iteration, Primary, Statement, Value};
+use crate::print_js;
 
 impl Executable for Statement {
     fn execute(&self, env: &mut Environment) -> Result<(), RetErr> {
@@ -12,7 +13,7 @@ impl Executable for Statement {
             }
             Print(expression) => {
                 let result = expression.evaluate(env).map_err(|err| RetErr::Error(err))?;
-                Ok(println!("{}", result))
+                Ok(print_js(&result.to_string()))
             }
             Declaration(declaration) => declaration.execute(env),
             Function(function) => function.execute(env),
