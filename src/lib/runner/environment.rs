@@ -3,10 +3,12 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct Environment {
     scope: Rc<RefCell<Scope>>,
 }
 
+#[derive(Debug)]
 struct Scope {
     data: HashMap<String, Value>,
     parent: Option<Rc<RefCell<Scope>>>,
@@ -38,6 +40,14 @@ impl Environment {
             .borrow_mut()
             .assign(key.clone(), value)
             .ok_or(format!("Variable '{}' not declared", key))
+    }
+}
+
+impl Clone for Environment {
+    fn clone(&self) -> Self {
+        Environment {
+            scope: self.scope.clone(),
+        }
     }
 }
 

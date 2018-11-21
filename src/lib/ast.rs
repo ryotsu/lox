@@ -1,3 +1,4 @@
+use super::runner::environment::Environment;
 use std::fmt;
 
 #[derive(Debug)]
@@ -131,17 +132,29 @@ pub struct Call {
     pub arguments: Vec<Expression>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum Value {
     Literal(Primary),
-    Function(Function),
+    Function(Function, Environment),
+}
+
+impl PartialEq for Value {
+    fn eq(&self, other: &Value) -> bool {
+        use self::Value::*;
+
+        match (self, other) {
+            (Literal(s), Literal(o)) => s == o,
+            (Function(s, _), Function(o, _)) => s == o,
+            _ => false,
+        }
+    }
 }
 
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Value::Literal(literal) => write!(f, "{}", literal),
-            Value::Function(func) => write!(f, "<function {}>", func.name),
+            Value::Function(func, _) => write!(f, "<function {}>", func.name),
         }
     }
 }
