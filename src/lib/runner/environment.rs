@@ -10,7 +10,7 @@ pub struct Environment {
 
 #[derive(Debug)]
 struct Scope {
-    data: HashMap<String, Rc<Value>>,
+    data: HashMap<Rc<String>, Rc<Value>>,
     parent: Option<Rc<RefCell<Scope>>>,
 }
 
@@ -27,15 +27,15 @@ impl Environment {
         }
     }
 
-    pub fn declare(&mut self, key: String, value: Rc<Value>) {
+    pub fn declare(&mut self, key: Rc<String>, value: Rc<Value>) {
         self.scope.borrow_mut().declare(key, value)
     }
 
-    pub fn get(&self, key: &str) -> Option<Rc<Value>> {
+    pub fn get(&self, key: &Rc<String>) -> Option<Rc<Value>> {
         self.scope.borrow().get(key)
     }
 
-    pub fn assign(&mut self, key: String, value: Rc<Value>) -> Result<Rc<Value>, String> {
+    pub fn assign(&mut self, key: Rc<String>, value: Rc<Value>) -> Result<Rc<Value>, String> {
         self.scope
             .borrow_mut()
             .assign(key.clone(), value)
@@ -59,11 +59,11 @@ impl Scope {
         }
     }
 
-    fn declare(&mut self, key: String, value: Rc<Value>) {
+    fn declare(&mut self, key: Rc<String>, value: Rc<Value>) {
         self.data.insert(key, value);
     }
 
-    fn get(&self, key: &str) -> Option<Rc<Value>> {
+    fn get(&self, key: &Rc<String>) -> Option<Rc<Value>> {
         self.data.get(key).cloned().or_else(|| {
             self.parent
                 .as_ref()
@@ -71,7 +71,7 @@ impl Scope {
         })
     }
 
-    fn assign(&mut self, key: String, value: Rc<Value>) -> Option<Rc<Value>> {
+    fn assign(&mut self, key: Rc<String>, value: Rc<Value>) -> Option<Rc<Value>> {
         if self.data.contains_key(&key) {
             self.data.insert(key, value)
         } else {

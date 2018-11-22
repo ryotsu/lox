@@ -104,7 +104,7 @@ impl Evaluable for Logical {
 impl Evaluable for Assignment {
     fn evaluate(&self, env: &mut Environment) -> Result<Rc<Value>, String> {
         let value = self.value.evaluate(env)?;
-        env.assign(self.variable.to_string(), value)
+        env.assign(self.variable.clone(), value)
     }
 }
 
