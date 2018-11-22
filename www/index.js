@@ -1,4 +1,3 @@
-import "./style.css";
 import * as wasm from "lox";
 import CodeFlask from 'codeflask';
 import { programs } from './programs.js';
