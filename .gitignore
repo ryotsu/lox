@@ -4,3 +4,5 @@
 *.lox
 *.data
 benches
+pkg
+www
