@@ -37,7 +37,7 @@ print fib(20);
 
 fun prime_factors(num) {
   var i = 2;
-  while (num > i * i) {
+  while (num >= i * i) {
     while (remainder(num, i) == 0) {
       num = num / i;
       print i;
