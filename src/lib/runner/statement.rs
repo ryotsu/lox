@@ -3,6 +3,7 @@ use super::{Evaluable, Executable, RetErr};
 use crate::ast::Statement::*;
 use crate::ast::{Block, Conditional, Declaration, Function, Iteration, Primary, Statement, Value};
 use crate::print_js;
+use std::rc::Rc;
 
 impl Executable for Statement {
     fn execute(&self, env: &mut Environment) -> Result<(), RetErr> {
@@ -32,7 +33,7 @@ impl Executable for Declaration {
     fn execute(&self, env: &mut Environment) -> Result<(), RetErr> {
         let value = match &self.value {
             Some(expression) => expression.evaluate(env).map_err(|err| RetErr::Error(err))?,
-            None => Value::Literal(Primary::Nil),
+            None => Rc::new(Value::Literal(Primary::Nil)),
         };
 
         env.declare(self.name.clone(), value);
@@ -45,7 +46,7 @@ impl Executable for Function {
         let func_env = env.clone();
         env.declare(
             self.name.clone(),
-            Value::Function((*self).clone(), func_env),
+            Rc::new(Value::Function((*self).clone(), func_env)),
         );
         Ok(())
     }

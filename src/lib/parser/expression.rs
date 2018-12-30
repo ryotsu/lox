@@ -4,6 +4,7 @@ use crate::ast::{
 };
 use crate::tokens::{Token, TokenType::*};
 use std::iter::Peekable;
+use std::rc::Rc;
 
 macro_rules! make_function {
     ($name:ident, $fun:path, $($x:expr),+) => {
@@ -178,7 +179,7 @@ impl Literal {
         }
 
         let literal = match tokens.next().unwrap().token_type {
-            IDENTIFIER(identifier) => Variable(identifier),
+            IDENTIFIER(identifier) => Variable(Rc::new(identifier)),
             NUMBER(num) => Primary(Number(num)),
             STRING(s) => Primary(String(s)),
             TRUE => Primary(Boolean(true)),

@@ -1,3 +1,9 @@
 /target
 **/*.rs.bk
 pkg
+*.txt
+*.lox
+*.data
+benches
+pkg
+www

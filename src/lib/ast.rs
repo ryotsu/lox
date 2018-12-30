@@ -1,5 +1,6 @@
 use super::runner::environment::Environment;
 use std::fmt;
+use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct Program {
@@ -20,14 +21,14 @@ pub enum Statement {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Declaration {
-    pub name: String,
+    pub name: Rc<String>,
     pub value: Option<Expression>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Function {
-    pub name: String,
-    pub params: Vec<String>,
+    pub name: Rc<String>,
+    pub params: Vec<Rc<String>>,
     pub body: Box<Statement>,
 }
 
@@ -62,7 +63,7 @@ pub enum Expression {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
-    Variable(String),
+    Variable(Rc<String>),
     Primary(Primary),
 }
 
@@ -96,7 +97,7 @@ pub struct Logical {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Assignment {
-    pub variable: String,
+    pub variable: Rc<String>,
     pub value: Box<Expression>,
 }
 

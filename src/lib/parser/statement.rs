@@ -2,6 +2,7 @@ use super::utils;
 use crate::ast::{Block, Conditional, Declaration, Expression, Function, Iteration, Statement};
 use crate::tokens::{Token, TokenType::*};
 use std::iter::Peekable;
+use std::rc::Rc;
 
 impl Statement {
     pub fn parse<T: Iterator<Item = Token>>(tokens: &mut Peekable<T>) -> Result<Self, String> {
@@ -58,7 +59,7 @@ impl Declaration {
 
         utils::consume(tokens, SEMICOLON, "Expect ';' after variable declaration")?;
         Ok(Statement::Declaration(Self {
-            name: name,
+            name: Rc::new(name),
             value: value,
         }))
     }
@@ -82,8 +83,8 @@ impl Function {
         let body = Block::parse(tokens)?;
 
         Ok(Statement::Function(Function {
-            name: name,
-            params: params,
+            name: Rc::new(name),
+            params: params.into_iter().map(|param| Rc::new(param)).collect(),
             body: Box::new(body),
         }))
     }

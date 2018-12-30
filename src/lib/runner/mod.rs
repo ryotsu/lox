@@ -1,17 +1,18 @@
 pub mod environment;
 mod expression;
 mod statement;
+use std::rc::Rc;
 
 use self::environment::Environment;
 use super::ast::{Program, Value};
 
 enum RetErr {
-    Return(Value),
+    Return(Rc<Value>),
     Error(String),
 }
 
 trait Evaluable {
-    fn evaluate(&self, env: &mut Environment) -> Result<Value, String>;
+    fn evaluate(&self, env: &mut Environment) -> Result<Rc<Value>, String>;
 }
 
 trait Executable {
