@@ -151,7 +151,7 @@ impl<'a> Scanner<'a> {
     fn scan_identifier(&mut self, ch: char) -> Option<Token> {
         self.literal.push(ch);
 
-        while check_func!(self.source, is_alpha, is_alpha) {
+        while check_func!(self.source, is_alpha, is_digit) {
             if let Some(ch) = self.source.next() {
                 self.put_char(ch);
             }
